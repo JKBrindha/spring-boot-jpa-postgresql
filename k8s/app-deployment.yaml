@@ -14,8 +14,8 @@ spec:
         app: spring-boot-app
     spec:
       containers:
-        - name: app
-          image: jkbrindhadocker/spring-boot-jpa:v2.2.0
+        - name: springboot-app
+          image: jkbrindhadocker/springboot-app:PLACEHOLDER
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
