@@ -7,11 +7,11 @@ replicaCount: 3
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: jkbrindhadocker/spring-boot-jpa:v2.2.0
+  repository: jkbrindhadocker/springboot-app
   # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.0.0"
+  tag: ""
 env:
   POSTGRES_DB_URL: jdbc:postgresql://postgres-release-postgresql:5432/testdb
   POSTGRES_USER: postgres
@@ -22,6 +22,18 @@ imagePullSecrets: []
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
+
+# Namespace where Prometheus/ServiceMonitor lives
+monitoring:
+  namespace: monitoring
+  release: monitoring
+
+# Spring Boot app service info:
+app:
+  namespace: spring-boot-postgres-demo
+  label: spring-boot-app
+  portName: http  # Must match the port name in your service.yaml
+
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -122,12 +134,12 @@ resources: {}
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 #livenessProbe:
@@ -141,11 +153,11 @@ resources: {}
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 70
 
 # Additional volumes on the output Deployment definition.
 volumes: []

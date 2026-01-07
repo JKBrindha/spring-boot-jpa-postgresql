@@ -2,14 +2,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "spring-boot-postgres.fullname" . }}
+  name: spring-boot-hpa
+  namespace: spring-boot-postgres-demo
   labels:
     {{- include "spring-boot-postgres.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "spring-boot-postgres.fullname" . }}
+    name: spring-boot-release-spring-boot-postgres
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

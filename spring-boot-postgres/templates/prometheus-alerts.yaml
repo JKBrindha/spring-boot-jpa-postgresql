@@ -1,0 +1,60 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "spring-boot-postgres.fullname" . }}-alerts
+  namespace: {{ .Values.monitoring.namespace | default "monitoring" }}
+  labels:
+    release: {{ .Values.monitoring.release | default "monitoring" }}
+spec:
+  groups:
+  - name: spring-boot.rules
+    rules:
+
+    - alert: SpringBootAppDown
+      expr: absent(up{namespace="{{ .Release.Namespace }}"})
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Spring Boot application is DOWN"
+        description: "No running Spring Boot targets detected for 1 minute."
+
+    - alert: SpringBootDeploymentDown
+      expr: kube_deployment_status_replicas_available{deployment="spring-boot-release-spring-boot-postgres"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Spring Boot deployment has zero available replicas"
+        description: "All replicas of the Spring Boot deployment are down."
+
+    - alert: HighJvmHeapUsage
+      expr: |
+        (jvm_memory_used_bytes{area="heap"}
+        / jvm_memory_max_bytes{area="heap"}) > 0.8
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High JVM heap usage"
+        description: "JVM heap usage above 80%."
+
+    - alert: HighHttp5xxErrorRate
+      expr: |
+        rate(http_server_requests_seconds_count{status=~"5.."}[1m]) > 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High HTTP 5xx error rate"
+        description: "Spring Boot app returning 5xx errors."
+
+    - alert: PodRestartingFrequently
+      expr: |
+        increase(kube_pod_container_status_restarts_total[5m]) > 2
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod restarting frequently"
+        description: "Spring Boot pod restarted multiple times."
