@@ -6,4 +6,4 @@ metadata:
 data:
   POSTGRES_DB: "testdb"
   POSTGRES_USER: "postgres"
-  POSTGRES_DB_URL: "jdbc:postgresql://postgres-release-postgresql:5432/testdb"
+  POSTGRES_DB_URL: "jdbc:postgresql://postgres-postgresql:5432/testdb"
