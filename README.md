@@ -78,7 +78,7 @@ Run both Back-end & Front-end in one place:
 ```
 mvn spring-boot:run
 ```
-###########Trying to trigger CI/CD 
+###########Trying to trigger CI/CD for new image
 
 #######Triggering after correcting the scope of token
 ######Testing both CI and CD
